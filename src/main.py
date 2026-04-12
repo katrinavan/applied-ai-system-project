@@ -1,53 +1,50 @@
 """
-Command line runner for the Music Recommender Simulation.
+Command line runner for the Applied AI music recommender.
 
-This file helps you quickly run and test your recommender.
-
-You will implement the functions in recommender.py:
-- load_songs
-- score_song
-- recommend_songs
+This version extends the original recommender by allowing
+natural-language prompts to be converted into structured
+user preferences before generating recommendations.
 """
 
 from src.recommender import load_songs, recommend_songs
+from src.parser import parse_user_prompt
+
+
+def run_prompt(prompt: str, songs: list[dict], k: int = 5) -> None:
+    parsed = parse_user_prompt(prompt)
+
+    user_prefs = {
+        "genre": parsed["genre"],
+        "mood": parsed["mood"],
+        "energy": parsed["energy"],
+        "likes_acoustic": parsed["likes_acoustic"],
+    }
+
+    recommendations = recommend_songs(user_prefs, songs, k=k)
+
+    print(f"\nPrompt: {prompt}")
+    print("Inferred preferences:")
+    print(user_prefs)
+    print(f"Confidence: {parsed['confidence']:.2f}")
+    print(f"Matched signals: {parsed['matched_signals']}\n")
+
+    for song, score, explanation in recommendations:
+        print(f"{song['title']} - Score: {score:.2f}")
+        print(f"Because: {explanation}")
+        print()
 
 
 def main() -> None:
     songs = load_songs("data/songs.csv")
 
-    # Starter example profile
-    user_prefs = {
-        "genre": "pop",
-        "mood": "happy",
-        "energy": 0.8,
-        "likes_acoustic": False,
-    }
+    prompts = [
+        "Give me happy upbeat songs for a fun drive",
+        "I want calm acoustic music for studying",
+        "Recommend chill rainy day songs",
+    ]
 
-    recommendations = recommend_songs(user_prefs, songs, k=5)
-
-    print("\nTop recommendations for User 1:\n")
-    for rec in recommendations:
-        song, score, explanation = rec
-        print(f"{song['title']} - Score: {score:.2f}")
-        print(f"Because: {explanation}")
-        print()
-
-    # Second user for Phase 4
-    user_prefs_2 = {
-        "genre": "lofi",
-        "mood": "chill",
-        "energy": 0.3,
-        "likes_acoustic": True,
-    }
-
-    recommendations_2 = recommend_songs(user_prefs_2, songs, k=5)
-
-    print("\nTop recommendations for User 2:\n")
-    for rec in recommendations_2:
-        song, score, explanation = rec
-        print(f"{song['title']} - Score: {score:.2f}")
-        print(f"Because: {explanation}")
-        print()
+    for prompt in prompts:
+        run_prompt(prompt, songs, k=5)
 
 
 if __name__ == "__main__":
