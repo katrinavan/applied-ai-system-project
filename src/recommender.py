@@ -33,22 +33,63 @@ class UserProfile:
     likes_acoustic: bool
 
 
-def _score_song_dict(song: Dict, user_prefs: Dict) -> Tuple[float, str]:
-    score = 0.0
+def _describe_energy_match(energy_diff: float) -> str:
+    if energy_diff <= 0.10:
+        return "is very close to your target energy"
+    if energy_diff <= 0.25:
+        return "is fairly close to your target energy"
+    return "is less aligned with your target energy"
+
+
+def _describe_acoustic_match(likes_acoustic: bool, acousticness: float) -> str:
+    if likes_acoustic:
+        if acousticness >= 0.7:
+            return "strongly matches your acoustic preference"
+        if acousticness >= 0.4:
+            return "somewhat matches your acoustic preference"
+        return "only lightly matches your acoustic preference"
+    else:
+        if acousticness <= 0.3:
+            return "fits your preference for less acoustic songs"
+        if acousticness <= 0.6:
+            return "somewhat fits your preference for less acoustic songs"
+        return "is more acoustic than your usual preference"
+
+
+def _build_dict_explanation(song: Dict, user_prefs: Dict) -> str:
     reasons = []
 
     if song["genre"].lower() == user_prefs["genre"].lower():
+        reasons.append(f"it matches your preferred genre of {user_prefs['genre']}")
+
+    if song["mood"].lower() == user_prefs["mood"].lower():
+        reasons.append(f"it fits the {user_prefs['mood']} mood you asked for")
+
+    energy_diff = abs(song["energy"] - user_prefs["energy"])
+    reasons.append(_describe_energy_match(energy_diff))
+
+    reasons.append(
+        _describe_acoustic_match(
+            user_prefs.get("likes_acoustic", False),
+            song["acousticness"],
+        )
+    )
+
+    return "Recommended because " + ", ".join(reasons) + "."
+
+
+def _score_song_dict(song: Dict, user_prefs: Dict) -> Tuple[float, str]:
+    score = 0.0
+
+    if song["genre"].lower() == user_prefs["genre"].lower():
         score += 2.0
-        reasons.append("genre match")
 
     if song["mood"].lower() == user_prefs["mood"].lower():
         score += 1.5
-        reasons.append("mood match")
 
     energy_diff = abs(song["energy"] - user_prefs["energy"])
     energy_score = max(0.0, 2.0 - (energy_diff * 2))
     score += energy_score
-    reasons.append(f"energy diff {energy_diff:.2f}")
 
     likes_acoustic = user_prefs.get("likes_acoustic", False)
     if likes_acoustic:
@@ -58,12 +99,7 @@ def _score_song_dict(song: Dict, user_prefs: Dict) -> Tuple[float, str]:
 
     score += acoustic_score
 
-    if likes_acoustic:
-        reasons.append("matches acoustic preference")
-    else:
-        reasons.append("matches non-acoustic preference")
-
-    explanation = ", ".join(reasons)
+    explanation = _build_dict_explanation(song, user_prefs)
     return score, explanation
 
 
@@ -109,20 +145,16 @@ class Recommender:
         reasons = []
 
         if song.genre.lower() == user.favorite_genre.lower():
-            reasons.append("genre match")
+            reasons.append(f"it matches your preferred genre of {user.favorite_genre}")
 
         if song.mood.lower() == user.favorite_mood.lower():
-            reasons.append("mood match")
+            reasons.append(f"it fits the {user.favorite_mood} mood you prefer")
 
         energy_diff = abs(song.energy - user.target_energy)
-        reasons.append(f"energy diff {energy_diff:.2f}")
+        reasons.append(_describe_energy_match(energy_diff))
+        reasons.append(_describe_acoustic_match(user.likes_acoustic, song.acousticness))
 
-        if user.likes_acoustic:
-            reasons.append("user likes acoustic songs")
-        else:
-            reasons.append("user prefers less acoustic songs")
-
-        return "Recommended because of " + ", ".join(reasons) + "."
+        return "Recommended because " + ", ".join(reasons) + "."
 
 
 def load_songs(csv_path: str) -> List[Dict]:
