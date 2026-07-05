@@ -15,7 +15,7 @@ def test_gym_prompt_maps_to_high_energy():
     assert result["energy"] >= 0.8
 
 
-def test_happy_prompt_detected():
+def test_happy_prompt_detected(): 
     result = parse_user_prompt("Play happy upbeat songs")
     assert result["mood"] == "happy"
     assert result["energy"] >= 0.75
