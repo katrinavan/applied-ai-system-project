@@ -212,7 +212,7 @@ Natural-language inputs can be vague or incomplete, so I added confidence scorin
 
 ### Why explanations matter
 
-I added recommendation explanations so the system would be easier to trust and evaluate. Instead of only returning ranked songs, the recommender also explains which features influenced the result, which makes the system feel more transparent and more aligned with responsible AI design.
+I added recommendation explanations so the system would be easier to trust and evaluate. Instead of only returning ranked songs, the recommender also explains which features influenced the result, which makes the system feel more transparent and more aligned with responsible AI design. 
 
 ### Trade-offs I made
 

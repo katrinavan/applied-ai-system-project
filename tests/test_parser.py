@@ -6,7 +6,7 @@ def test_study_prompt_maps_to_lofi_chill():
     assert result["genre"] == "lofi"
     assert result["mood"] == "chill"
     assert result["likes_acoustic"] is True
-    assert result["confidence"] > 0.5
+    assert result["confidence"] > 0.5 
 
 
 def test_gym_prompt_maps_to_high_energy():

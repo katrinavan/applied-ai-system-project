@@ -5,7 +5,7 @@ def parse_user_prompt(prompt: str) -> dict:
     mood = None
     energy = 0.5
     likes_acoustic = False
-    matched_signals = []
+    matched_signals = [] 
 
     if "study" in text or "focus" in text or "lofi" in text:
         genre = "lofi"
