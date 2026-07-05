@@ -12,7 +12,7 @@ def make_small_recommender() -> Recommender:
             tempo_bpm=120,
             valence=0.9,
             danceability=0.8,
-            acousticness=0.2,
+            acousticness=0.2, 
         ),
         Song(
             id=2,

@@ -182,7 +182,7 @@ This project is mainly about helping students understand how a simple recommende
 - `recommend_songs()` scores every song and returns the top ranked results.
 - `Recommender.recommend()` does the same idea in the OOP version used by the tests.
 - `explain_recommendation()` gives a short explanation for why a song ranked well.
-
+ 
 ### Where students may struggle
 - Understanding how the weighted scoring formula works
 - Seeing why one feature can affect ranking more than another

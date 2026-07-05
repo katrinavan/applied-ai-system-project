@@ -27,7 +27,7 @@ Songs get additional points if the mood matches
 Songs get points based on how close their energy is to the user’s target energy
 Songs get points based on whether they match the user’s acoustic preference
 
-After scoring all songs, the model sorts them from highest to lowest score and returns the top recommendations. Compared to the starter logic, I refined the weighting system and added clearer explanations for why each song was recommended.
+After scoring all songs, the model sorts them from highest to lowest score and returns the top recommendations. Compared to the starter logic, I refined the weighting system and added clearer explanations for why each song was recommended.  
 
 ---
 
